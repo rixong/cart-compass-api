@@ -82,6 +82,9 @@ const apple = '5fa85a9d290e4e138e49b508';
 const lettuce = '5fa85a9d290e4e138e49b50a';
 const heb = '5fa85cab6cb48a14ba626248';
 const costco = '5fa85cab6cb48a14ba626249';
+const appleItem = '5fa85dbe466c0715c012747d';
+const porkItem = '5fa85a9d290e4e138e49b509';
+
 
 const user1 = new User({
   name: 'Bob',
@@ -164,7 +167,6 @@ const user1 = new User({
 
 // User.findById(userId)
 //   .then((user) => {
-//     // const myList = user.lists.find((list) => list._id === list1);
 //     const myList = user.lists.id(heb);
 //     const item1 = new ListItem({
 //       masterItemId: apple,
@@ -186,4 +188,14 @@ const user1 = new User({
 //   })
 
 
+User.findById(userId)
+  .then((user) => {
+    const myList = user.lists.id(heb);
+    const myItem = myList.listItems.id(appleItem);
+    console.log(myItem);
+  });
 
+// List.findById(heb)
+//   .then((list) => {
+//     console.log(list);
+//   });
