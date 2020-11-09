@@ -21,4 +21,13 @@ router.post('/lists', async (req, res) => {
   }
 });
 
+router.get('/lists', async (req, res) => {
+  try {
+    const user = await User.findById(req.body.userId);
+    res.send(user.lists);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 module.exports = router;
