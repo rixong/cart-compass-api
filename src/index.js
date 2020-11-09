@@ -1,6 +1,6 @@
 const express = require('express');
 
-// require('./db/mongoose');
+require('./db/mongoose');
 
 // const path = require('path');
 
