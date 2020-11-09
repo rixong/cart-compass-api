@@ -1,7 +1,7 @@
 const express = require('express');
 const { defaultCategories } = require('../models/category');
 
-const router = new express.Router;
+const router = new express.Router();
 const User = require('../models/user');
 // const defaultCategories = require('../models/category');
 
