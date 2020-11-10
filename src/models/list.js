@@ -3,18 +3,33 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ListItemSchema = new Schema({
-  masterItemId: mongoose.ObjectId,
+  masterItemId: {
+    type: mongoose.ObjectId,
+    required: true,
+  },
   quantity: String,
 });
 
 const ListItem = mongoose.model('ListItem', ListItemSchema);
 
 const ListSchema = new Schema({
-  name: String,
-  dateCreated: Date,
-  userId: mongoose.ObjectId,
+  name: {
+    type: String,
+    required: true,
+  },
+  dateCreated: {
+    type: Date,
+    required: true,
+  },
+  userId: {
+    type: mongoose.ObjectId,
+    required: true,
+  },
+  isCurrent: {
+    type: Boolean,
+    default: true,
+  },
   sharedWith: [mongoose.ObjectId],
-  isCurrent: Boolean,
   listItems: [ListItemSchema],
 });
 

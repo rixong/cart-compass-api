@@ -1,6 +1,7 @@
 
 const mongoose = require('mongoose');
-const { Category, CategorySchema, defaultCategories } = require('./category');
+const validator = require('validator');
+const { Category, CategorySchema } = require('./category');
 const { ListItemSchema, ListItem, ListSchema, List } = require('./list');
 const { MasterItemSchema, MasterItem } = require('./masterItem');
 
@@ -9,15 +10,24 @@ const { Schema } = mongoose;
 const UserSchema = new Schema({
   email: {
     type: String,
-    require: true,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error('Not a proper email format.');
+      }
+    },
   },
   password: {
     type: String,
-    require: true,
+    trim: true,
+    required: true,
   },
   name: {
     type: String,
-    require: true,
+    trim: true,
+    required: true,
   },
   masterList: [MasterItemSchema],
   categories: [CategorySchema],
