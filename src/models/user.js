@@ -1,6 +1,7 @@
 
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 const { Category, CategorySchema } = require('./category');
 const { ListItemSchema, ListItem, ListSchema, List } = require('./list');
 const { MasterItemSchema, MasterItem } = require('./masterItem');
@@ -21,7 +22,6 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    trim: true,
     required: true,
   },
   name: {
@@ -29,16 +29,23 @@ const UserSchema = new Schema({
     trim: true,
     required: true,
   },
+  tokens: [],
   masterList: [MasterItemSchema],
   categories: [CategorySchema],
   lists: [ListSchema],
 });
 
+UserSchema.pre('save', async function (next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
+
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;
-
-// module.exports = User;
 
 ///  FOR TESTING
 
