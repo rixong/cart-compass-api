@@ -115,3 +115,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 src/routers/routes.txt
+src/models/user seeds.txt
