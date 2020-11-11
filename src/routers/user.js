@@ -27,31 +27,38 @@ router.post('/users', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
-    const token = user.generateAuthToken();
+    const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
   } catch (error) {
     res.status(400).send('oops.');
   }
 });
 
-// router.post('/profile', async (req, res) => {
+router.get('/profile', auth, async (req, res) => {
+  res.status(202).send(req.curUser);
+});
 
-//   try {
-//     User.findOne(tokens.token: req.body.token)
-//   } catch (error) {
+// Logout
 
-//   }
-// })
+router.post('/logout', auth, async (req, res) => {
+  try {
+    // console.log(req.curUser);
+    req.curUser.tokens = req.curUser.tokens.filter((token) => token.token !== req.curToken);
+    await req.curUser.save();
+    res.send({ message: 'done' });
+  } catch (error) {
+    res.status(500).send();
+  }
+});
 
 // All Users
-router.get('/users', auth, async (req, res) => {
+router.get('/users', async (req, res) => {
   try {
-    console.log(req.user.name);
     const users = await User.find();
     const names = users.map((user) => user.name);
     res.status(200).send(names);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(500).send(error);
   }
 });
 

@@ -13,23 +13,12 @@ const auth = async (req, res, next) => {
     if (!user) {
       throw new Error();
     }
-    req.user = user;
+    req.curToken = sentToken;
+    req.curUser = user;
     next();
   } catch (error) {
-    res.status(400).send({ error: 'Please login.' });
+    res.status(401).send({ error: 'Please login.' });
   }
 };
-
-
-//   const token = req.headers.authorization.replace('Bearer ', '');
-//   // console.log(token);
-//   const JWTSecret = 'secret';
-//   let id = jwt.verify(token, JWTSecret);
-//   id = id.userId;
-//   const user = User.findById(id);
-//   console.log(user);
-
-//   next()
-// });
 
 module.exports = auth;
