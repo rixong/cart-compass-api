@@ -75,13 +75,12 @@ UserSchema.pre('save', async function (next) {
 UserSchema.methods.generateAuthToken = async function () {
   const user = this;
   const JWTSecret = 'secret';
+  // console.log('user._id', user._id)
   const token = await jwt.sign({ userId: user._id.toString() }, JWTSecret);
   user.tokens = user.tokens.concat({ token });
   await user.save();
   return token;
 };
-
-// Authenticate - Check if token exists and is correct
 
 const User = mongoose.model('User', UserSchema);
 
