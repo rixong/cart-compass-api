@@ -71,6 +71,19 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
+
+// Restrict response content - Hide sensitve data
+
+UserSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens;
+
+  return userObject;
+};
+
 // Create the JWT
 UserSchema.methods.generateAuthToken = async function () {
   const user = this;

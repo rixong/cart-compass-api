@@ -34,6 +34,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Profile
 router.get('/profile', auth, async (req, res) => {
   res.status(202).send(req.curUser);
 });
