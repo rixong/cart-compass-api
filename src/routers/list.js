@@ -2,7 +2,6 @@
 /* eslint-disable no-underscore-dangle */
 const express = require('express');
 const { List, ListItem } = require('../models/list');
-// const User = require('../models/user');
 const auth = require('../middleware/authentication');
 
 const router = new express.Router();
@@ -48,10 +47,8 @@ router.delete('/lists', auth, async (req, res) => {
 // Get User's Current List
 router.get('/lists/current', auth, async (req, res) => {
   try {
-    const curList = req.curUser.lists.find((list) => {
-      return list._id.toString() === req.curUser.currentList.toString();
-    });
-    res.send(curList);
+    const list = req.curUser.lists.id(req.curUser.currentList);
+    res.send(list);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -62,22 +59,23 @@ router.post('/lists/current', auth, async (req, res) => {
   try {
     req.curUser.currentList = req.body.listId;
     await req.curUser.save();
-    res.send(req.curUser.currentList);
+    const list = req.curUser.lists.id(req.curUser.currentList);
+    res.send(list);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
+/// List Item Routes
+
 // Add Item to Current List
 router.post('/lists/items', auth, async (req, res) => {
   try {
-    const curList = req.curUser.lists.find((list) => {
-      return list._id.toString() === req.curUser.currentList.toString();
-    });
+    const list = req.curUser.lists.id(req.curUser.currentList);
     const item = new ListItem(req.body);
-    curList.listItems.push(item);
+    list.listItems.push(item);
     await req.curUser.save();
-    res.send(curList.listItems);
+    res.send(list.listItems);
   } catch (e) {
     res.status(500).send(e);
   }
@@ -86,33 +84,25 @@ router.post('/lists/items', auth, async (req, res) => {
 // Toggle Item's Active Property
 router.patch('/lists/items', auth, async (req, res) => {
   try {
-    const curList = req.curUser.lists.find((list) => {
-      return list._id.toString() === req.curUser.currentList.toString();
-    });
-    const curItem = curList.listItems.find((item) => {
-      return item._id.toString() === req.body.itemId;
-    });
-    curItem.active = !curItem.active;
+    const list = req.curUser.lists.id(req.curUser.currentList);
+    const item = list.listItems.id(req.body.itemId);
+    item.active = !item.active;
     await req.curUser.save();
-    res.send(curItem);
+    res.send(item);
   } catch (e) {
     res.status(500).send(e);
   }
 });
 
 // Delete list item
-
 router.delete('/lists/items', auth, async (req, res) => {
   try {
-    const curList = req.curUser.lists.find((list) => {
-      return list._id.toString() === req.curUser.currentList.toString();
-    });
-    curList.listItems = curList.listItems.filter((item) => {
+    const list = req.curUser.lists.id(req.curUser.currentList);
+    list.listItems = list.listItems.filter((item) => {
       return item._id.toString() !== req.body.itemId;
     });
-    // console.log(curItems);
     await req.curUser.save();
-    res.send(curList.listItems);
+    res.send(list);
   } catch (e) {
     res.status(500).send(e);
   }

@@ -18,7 +18,7 @@ router.post('/users', async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
   } catch (error) {
-    res.status(500).send('*Something went wrong');
+    res.status(500).send('Something went wrong');
   }
 });
 
