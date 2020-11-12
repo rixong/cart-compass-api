@@ -8,6 +8,10 @@ const ListItemSchema = new Schema({
     required: true,
   },
   quantity: String,
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const ListItem = mongoose.model('ListItem', ListItemSchema);
