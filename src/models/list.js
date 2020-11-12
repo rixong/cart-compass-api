@@ -25,10 +25,6 @@ const ListSchema = new Schema({
     type: mongoose.ObjectId,
     required: true,
   },
-  isCurrent: {
-    type: Boolean,
-    default: true,
-  },
   sharedWith: [mongoose.ObjectId],
   listItems: [ListItemSchema],
 });

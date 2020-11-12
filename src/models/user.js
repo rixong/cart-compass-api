@@ -36,6 +36,9 @@ const UserSchema = new Schema({
     trim: true,
     required: true,
   },
+  currentList: {
+    type: mongoose.ObjectId,
+  },
   tokens: [{
     token: {
       type: String,
