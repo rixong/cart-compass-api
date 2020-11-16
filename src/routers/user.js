@@ -26,6 +26,7 @@ router.post('/users', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
+    console.log('Logging in...')
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
@@ -56,8 +57,8 @@ router.post('/logout', auth, async (req, res) => {
 router.get('/users', async (req, res) => {
   try {
     const users = await User.find();
-    const names = users.map((user) => user.name);
-    res.status(200).send(names);
+    // const names = users.map((user) => user.name);
+    res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
   }

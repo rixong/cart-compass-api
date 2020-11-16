@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable func-names */
 const mongoose = require('mongoose');
 const validator = require('validator');
@@ -73,7 +74,6 @@ UserSchema.pre('save', async function (next) {
   }
   next();
 });
-
 
 // Restrict response content - Hide sensitve data
 
