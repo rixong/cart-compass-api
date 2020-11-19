@@ -10,15 +10,19 @@ const router = new express.Router();
 
 router.post('/users', async (req, res) => {
   if (req.body.password !== req.body.passwordConfirmation) {
-    res.send('Passwords don\'t match. Please try again.');
+    res.status(400).send('Passwords don\'t match. Please try again.');
   }
   const user = new User(req.body);
   user.categories.push(...defaultCategories);
   try {
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
-  } catch (error) {
-    res.status(500).send('Something went wrong');
+  } catch (e) {
+    if (e.code === 11000) {
+      res.status(400).send('Email already exists.');
+    } else {
+      res.status(500).send('Something went wrong.');
+    }
   }
 });
 
@@ -26,7 +30,7 @@ router.post('/users', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    console.log('Logging in...')
+    // console.log('Logging in...');
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
@@ -37,7 +41,7 @@ router.post('/login', async (req, res) => {
 
 // Profile
 router.get('/profile', auth, async (req, res) => {
-  res.status(202).send(req.curUser);
+  res.status(202).send({ user: req.curUser });
 });
 
 // Logout
@@ -45,7 +49,8 @@ router.get('/profile', auth, async (req, res) => {
 router.post('/logout', auth, async (req, res) => {
   try {
     // console.log(req.curUser);
-    req.curUser.tokens = req.curUser.tokens.filter((token) => token.token !== req.curToken);
+    // req.curUser.tokens = req.curUser.tokens.filter((token) => token.token !== req.curToken);
+    req.curUser.tokens = [];
     await req.curUser.save();
     res.send({ message: 'done' });
   } catch (error) {

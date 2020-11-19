@@ -16,7 +16,7 @@ router.post('/lists', auth, async (req, res) => {
     });
     req.curUser.lists.push(list);
     await req.curUser.save();
-    res.status(201).send(req.curUser.lists);
+    res.status(201).send(list);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -24,6 +24,7 @@ router.post('/lists', auth, async (req, res) => {
 
 // Get User's Lists
 router.get('/lists', auth, async (req, res) => {
+  console.log('pizza', req.curUser.lists);
   try {
     res.status(201).send(req.curUser.lists);
   } catch (error) {
