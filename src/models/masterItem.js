@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const MasterItemSchema = new Schema({
   name: {
     type: String,
+    // unique: true,
     required: true,
   },
   categoryId: mongoose.ObjectId,

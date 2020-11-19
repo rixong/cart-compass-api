@@ -10,7 +10,10 @@ const router = new express.Router();
 router.post('/items', auth, async (req, res) => {
   try {
     if (!req.curUser.categories.find((cat) => cat.id === req.body.categoryId)) {
-      res.status(401).send({ error: 'Category Id not found.' });
+      return res.status(401).send({ error: 'Category Id not found.' });
+    }
+    if (req.curUser.masterList.find((item) => item.name === req.body.name)) {
+      return res.status(200).send({ error: 'exists already' });
     }
     const newItem = new MasterItem({
       name: req.body.name,
@@ -18,7 +21,7 @@ router.post('/items', auth, async (req, res) => {
     });
     req.curUser.masterList.push(newItem);
     await req.curUser.save();
-    res.status(201).send(req.curUser.masterList);
+    res.status(201).send(newItem);
   } catch (error) {
     res.status(500).send({ error: 'Not connected to server.' });
   }

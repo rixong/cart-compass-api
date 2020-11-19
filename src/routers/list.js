@@ -24,7 +24,6 @@ router.post('/lists', auth, async (req, res) => {
 
 // Get User's Lists
 router.get('/lists', auth, async (req, res) => {
-  console.log('pizza', req.curUser.lists);
   try {
     res.status(201).send(req.curUser.lists);
   } catch (error) {
@@ -33,10 +32,10 @@ router.get('/lists', auth, async (req, res) => {
 });
 
 // Delete a list
-router.delete('/lists', auth, async (req, res) => {
+router.delete('/lists/:id', auth, async (req, res) => {
   try {
     req.curUser.lists = req.curUser.lists.filter((list) => {
-      return list.id !== req.body.listId;
+      return list.id !== req.params.id;
     });
     await req.curUser.save();
     res.status(201).send();
@@ -56,12 +55,13 @@ router.get('/lists/current', auth, async (req, res) => {
 });
 
 // Set User's Current List
-router.post('/lists/current', auth, async (req, res) => {
+router.post('/lists/current/:listId', auth, async (req, res) => {
+  console.log(req.params.listId);
+
   try {
-    req.curUser.currentList = req.body.listId;
+    req.curUser.currentList = req.params.listId;
     await req.curUser.save();
-    const list = req.curUser.lists.id(req.curUser.currentList);
-    res.send(list);
+    res.send(req.curUser.currentList);
   } catch (error) {
     res.status(500).send(error);
   }
