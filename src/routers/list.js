@@ -56,12 +56,11 @@ router.get('/lists/current', auth, async (req, res) => {
 
 // Set User's Current List
 router.post('/lists/current/:listId', auth, async (req, res) => {
-  console.log(req.params.listId);
-
   try {
+    // validate list existence
     req.curUser.currentList = req.params.listId;
     await req.curUser.save();
-    res.send(req.curUser.currentList);
+    res.status(200).send(req.curUser.currentList);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -83,10 +82,10 @@ router.post('/lists/items', auth, async (req, res) => {
 });
 
 // Toggle Item's Active Property
-router.patch('/lists/items', auth, async (req, res) => {
+router.patch('/lists/items/:itemId', auth, async (req, res) => {
   try {
     const list = req.curUser.lists.id(req.curUser.currentList);
-    const item = list.listItems.id(req.body.itemId);
+    const item = list.listItems.id(req.params.itemId);
     item.active = !item.active;
     await req.curUser.save();
     res.send(item);
