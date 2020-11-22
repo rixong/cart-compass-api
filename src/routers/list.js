@@ -3,6 +3,7 @@
 const express = require('express');
 const { List, ListItem } = require('../models/list');
 const auth = require('../middleware/authentication');
+const User = require('../models/user');
 
 const router = new express.Router();
 
@@ -51,6 +52,41 @@ router.get('/lists/current', auth, async (req, res) => {
     res.send(list);
   } catch (error) {
     res.status(500).send(error);
+  }
+});
+
+// Get a shared list
+
+router.get('/lists/shared', auth, async (req, res) => {
+  try {
+    // console.log(req.curUser._id);
+    const user = await User.findOne({ _id: req.body.userId });
+    const list = user.lists.id(req.body.listId);
+
+    if (list.sharedWith.includes(req.curUser.id)) {
+      const itemIds = list.listItems.map((item) => item.masterItemId);
+      const arr = [];
+      console.log(itemIds);
+      user.masterList.forEach((item) => {
+        console.log(item._id);
+        if (itemIds.includes(item._id)) {
+          arr.push(item);
+        }
+      });
+
+      // const items = user.masterList.filter((item) => itemIds.includes(item.id));
+
+
+      console.log('blue', arr);
+
+
+      // const masterItems = user.
+      res.send({ list });
+    } else {
+      res.send({ error: 'This list has not been shared with you.' });
+    }
+  } catch (e) {
+    res.send('oops');
   }
 });
 
