@@ -1,7 +1,8 @@
 const express = require('express');
 
-const { defaultCategories } = require('../models/category');
-const User = require('../models/user');
+// const { defaultCategories } = require('../models/category');
+const { User, SortOrder } = require('../models/user');
+const { Category } = require('../models/category');
 const auth = require('../middleware/authentication');
 
 const router = new express.Router();
@@ -13,7 +14,16 @@ router.post('/users', async (req, res) => {
     res.status(400).send('Passwords don\'t match. Please try again.');
   }
   const user = new User(req.body);
-  user.categories.push(...defaultCategories);
+  const categories = await Category.find({});
+  let count = 1;
+  categories.forEach((cat) => {
+    const element = new SortOrder({ categoryId: cat.id, order: count });
+    user.sortOrder.push(element);
+    count += 1;
+  });
+  // console.log(sortList);
+  // user.sortOrder.concat(...sortList);
+
   try {
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });

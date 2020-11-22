@@ -9,11 +9,21 @@ const jwt = require('jsonwebtoken');
 // const { ListItemSchema, ListItem, ListSchema, List } = require('./list');
 // const { MasterItemSchema, MasterItem } = require('./masterItem');
 
-const { Category, CategorySchema } = require('./category');
-const { ListItemSchema, ListItem, ListSchema, List } = require('./list');
-const { MasterItemSchema, MasterItem } = require('./masterItem');
+// const { Category, CategorySchema } = require('./category');
+const { ListSchema } = require('./list');
+const { MasterItemSchema } = require('./masterItem');
 
 const { Schema } = mongoose;
+
+const SortOrderSchema = new Schema({
+  categoryId:
+  {
+    type: mongoose.ObjectId,
+  },
+  order: {
+    type: Number,
+  },
+});
 
 const UserSchema = new Schema({
   email: {
@@ -47,7 +57,8 @@ const UserSchema = new Schema({
     },
   }],
   masterList: [MasterItemSchema],
-  categories: [CategorySchema],
+  sortOrder: [SortOrderSchema],
+  // categories: [CategorySchema],
   lists: [ListSchema],
 });
 
@@ -99,5 +110,6 @@ UserSchema.methods.generateAuthToken = async function () {
 };
 
 const User = mongoose.model('User', UserSchema);
+const SortOrder = mongoose.model('SortOrder', SortOrderSchema);
 
-module.exports = User;
+module.exports = { User, SortOrder };

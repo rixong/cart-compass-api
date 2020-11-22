@@ -19,6 +19,6 @@ router.patch('/categories', auth, async (req, res) => {
   } catch (e) {
     res.status(400).send(e);
   }
-})
+});
 
 module.exports = router;
