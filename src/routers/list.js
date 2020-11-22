@@ -66,21 +66,14 @@ router.get('/lists/shared', auth, async (req, res) => {
     if (list.sharedWith.includes(req.curUser.id)) {
       const itemIds = list.listItems.map((item) => item.masterItemId);
       const arr = [];
-      console.log(itemIds);
+      // console.log(itemIds);
       user.masterList.forEach((item) => {
-        console.log(item._id);
+        // console.log(item._id);
         if (itemIds.includes(item._id)) {
           arr.push(item);
         }
       });
-
-      // const items = user.masterList.filter((item) => itemIds.includes(item.id));
-
-
-      console.log('blue', arr);
-
-
-      // const masterItems = user.
+      // console.log('blue', arr);
       res.send({ list });
     } else {
       res.send({ error: 'This list has not been shared with you.' });
@@ -108,6 +101,7 @@ router.post('/lists/current/:listId', auth, async (req, res) => {
 router.post('/lists/items', auth, async (req, res) => {
   try {
     const list = req.curUser.lists.id(req.curUser.currentList);
+    // console.log(list)
     const item = new ListItem(req.body);
     list.listItems.push(item);
     await req.curUser.save();
@@ -122,6 +116,7 @@ router.patch('/lists/items/:itemId', auth, async (req, res) => {
   try {
     const list = req.curUser.lists.id(req.curUser.currentList);
     const item = list.listItems.id(req.params.itemId);
+    console.log(item);
     item.active = !item.active;
     await req.curUser.save();
     res.send(item);

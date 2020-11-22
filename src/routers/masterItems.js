@@ -10,9 +10,9 @@ const router = new express.Router();
 router.post('/items', auth, async (req, res) => {
   // Check if category exists
   try {
-    if (!req.curUser.categories.find((cat) => cat.id === req.body.categoryId)) {
-      res.status(401).send({ error: 'Category Id not found.' });
-    }
+    // if (!req.curUser.categories.find((cat) => cat.id === req.body.categoryId)) {
+    //   res.status(401).send({ error: 'Category Id not found.' });
+    // }
     // Check if item already exists - return if true, or create new item
     let foundItem = req.curUser.masterList.find((item) => item.name === req.body.name);
     if (foundItem) {
