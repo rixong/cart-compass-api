@@ -36,6 +36,9 @@ const UserSchema = new Schema({
   currentList: {
     type: mongoose.ObjectId,
   },
+  sharedWithMe: {
+    type: [mongoose.ObjectId],
+  },
   tokens: [{
     token: {
       type: String,
