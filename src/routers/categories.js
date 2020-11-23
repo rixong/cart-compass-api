@@ -1,13 +1,12 @@
 const express = require('express');
-const auth = require('../middleware/authentication');
+// const auth = require('../middleware/authentication');
 const { Category } = require('../models/category');
 
 const router = new express.Router();
 
 router.get('/categories', async (req, res) => {
   try {
-    const categories = Category.find({});
-    console.log(categories)
+    const categories = await Category.find({});
     res.status(201).send(categories);
   } catch (e) {
     res.status(400).send(e);

@@ -1,8 +1,9 @@
 const express = require('express');
 
 // const { defaultCategories } = require('../models/category');
-const { User, SortOrder } = require('../models/user');
+const User = require('../models/user');
 const { Category } = require('../models/category');
+const { SortOrder } = require('../models/sortOrder');
 const auth = require('../middleware/authentication');
 
 const router = new express.Router();
@@ -21,8 +22,6 @@ router.post('/users', async (req, res) => {
     user.sortOrder.push(element);
     count += 1;
   });
-  // console.log(sortList);
-  // user.sortOrder.concat(...sortList);
 
   try {
     const token = await user.generateAuthToken();

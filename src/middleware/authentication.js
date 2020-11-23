@@ -8,7 +8,6 @@ const auth = async (req, res, next) => {
     const JWTSecret = 'secret';
     const decoded = jwt.verify(sentToken, JWTSecret);
     // The following checks to see if user exists AND if that user has the correct token.
-    console.log(user);
     const user = await User.findOne({ _id: decoded.userId, 'tokens.token': sentToken });
     if (!user) {
       throw new Error();
