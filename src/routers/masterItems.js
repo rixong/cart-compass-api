@@ -32,13 +32,19 @@ router.post('/items', auth, async (req, res) => {
 });
 
 // Remove Master Item
-router.delete('/items/:id', auth, async (req, res) => {
+router.delete('/items/:itemId', auth, async (req, res) => {
+  // console.log(req.params.itemId);
   try {
     req.curUser.masterList = req.curUser.masterList.filter((item) => {
       return req.params.itemId !== item._id.toString();
     });
+    req.curUser.lists.forEach((list) => {
+      list.listItems = list.listItems.filter((item) => {
+        return item.masterItemId.toString() !== req.params.itemId;
+      });
+    });
     await req.curUser.save();
-    res.send();
+    res.send(req.curUser.masterList);
   } catch (e) {
     res.status(500).send({ error: 'Not connected to server.' });
   }
