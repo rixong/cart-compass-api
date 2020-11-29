@@ -32,7 +32,6 @@ const DEFAULT_CATEGORIES = [
   { name: 'Alcohol' },
   { name: 'Pharmacy' },
   { name: 'Dry Goods' },
-  { name: 'XXX' },
 ];
 
 const { Schema } = mongoose;

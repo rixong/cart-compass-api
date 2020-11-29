@@ -116,7 +116,7 @@ router.patch('/lists/items/:itemId', auth, async (req, res) => {
   try {
     const list = req.curUser.lists.id(req.curUser.currentList);
     const item = list.listItems.id(req.params.itemId);
-    console.log(item);
+    // console.log(item);
     item.active = !item.active;
     await req.curUser.save();
     res.send(item);
