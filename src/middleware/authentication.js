@@ -5,8 +5,8 @@ const auth = async (req, res, next) => {
   console.log('Auth runs');
   try {
     const sentToken = req.headers.authorization.replace('Bearer ', '');
-    const JWTSecret = 'secret';
-    const decoded = jwt.verify(sentToken, JWTSecret);
+    // const JWTSecret = 'secret';
+    const decoded = jwt.verify(sentToken, process.env.JWT_SECRET);
     // The following checks to see if user exists AND if that user has the correct token.
     const user = await User.findOne({ _id: decoded.userId, 'tokens.token': sentToken });
     if (!user) {
