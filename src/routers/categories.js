@@ -31,10 +31,10 @@ router.post('/categories', auth, async (req, res) => {
 router.post('/categories/admin', async (req, res) => {
   try {
     if (req.body.password === process.env.ADMIN_PW) {
-      // DEFAULT_CATEGORIES.forEach((category) => {
-      //   const cat = new Category(category);
-      //   cat.save();
-      // });
+      DEFAULT_CATEGORIES.forEach((category) => {
+        const cat = new Category(category);
+        cat.save();
+      });
       res.status(201).send('Categories built.');
     } else {
       res.status(400).send('You are not authorized.');
