@@ -14,7 +14,7 @@ router.post('/users', async (req, res) => {
   if (req.body.password !== req.body.passwordConfirmation) {
     res.status(400).send('Passwords don\'t match. Please try again.');
   }
-  const user = await new User(req.body);
+  const user = new User(req.body);
   const categories = await Category.find({});
   let count = 1;
   categories.forEach((cat) => {
@@ -22,7 +22,6 @@ router.post('/users', async (req, res) => {
     user.sortOrder.push(element);
     count += 1;
   });
-  await user.save();
   try {
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });

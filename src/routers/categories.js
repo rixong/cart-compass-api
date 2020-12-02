@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/authentication');
-const { Category } = require('../models/category');
+const { DEFAULT_CATEGORIES, Category } = require('../models/category');
 
 const router = new express.Router();
 
@@ -23,6 +23,24 @@ router.post('/categories', auth, async (req, res) => {
     res.status(201).send();
   } catch (e) {
     res.status(400).send(e);
+  }
+});
+
+// Build Categories
+
+router.post('/categories/admin', async (req, res) => {
+  try {
+    if (req.body.password === process.env.ADMIN_PW) {
+      // DEFAULT_CATEGORIES.forEach((category) => {
+      //   const cat = new Category(category);
+      //   cat.save();
+      // });
+      res.status(201).send('Categories built.');
+    } else {
+      res.status(400).send('You are not authorized.');
+    }
+  } catch (e) {
+    res.status(500).send(e);
   }
 });
 
