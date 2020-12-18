@@ -101,19 +101,16 @@ router.post('/lists/current/:listId', auth, async (req, res) => {
 router.post('/lists/items', auth, async (req, res) => {
   try {
     const list = req.curUser.lists.id(req.curUser.currentList);
-    const itemExists = list.listItems.find((item) => {
+    const existingItem = list.listItems.find((item) => {
       return item.masterItemId.toString() === req.body.masterItemId;
     });
-    console.log(itemExists);
-    if (itemExists) {
-      res.status(400).send({ error: 'Exists in list' });
-      // throw new Error('Item already exists');
-    } else {
-      const item = new ListItem(req.body);
-      list.listItems.push(item);
-      await req.curUser.save();
-      res.send(list.listItems);
+    if (existingItem) {
+      return res.status(400).send('Already in list!!!');
     }
+    const item = new ListItem(req.body);
+    list.listItems.push(item);
+    await req.curUser.save();
+    res.send(list.listItems);
   } catch (e) {
     res.status(500).send(e);
   }

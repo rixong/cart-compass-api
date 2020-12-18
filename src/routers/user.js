@@ -12,7 +12,11 @@ const router = new express.Router();
 
 router.post('/users', async (req, res) => {
   if (req.body.password !== req.body.passwordConfirmation) {
-    res.status(400).send('Passwords don\'t match. Please try again.');
+    return res.status(200).send({ error: 'Passwords don\'t match. Please try again.' });
+  }
+  const userExists = await User.findOne({ email: req.body.email });
+  if (userExists) {
+    return res.status(200).send({ error: 'Account already exists with this email.' });
   }
   const user = new User(req.body);
   const categories = await Category.find({});
@@ -27,9 +31,9 @@ router.post('/users', async (req, res) => {
     res.status(200).send({ user, token });
   } catch (e) {
     if (e.code === 11000) {
-      res.status(400).send('Email already exists.');
+      res.status(204).send('Email already exists.');
     } else {
-      res.status(500).send('Something went wrong.');
+      res.status(500).send('Invalid Login');
     }
   }
 });
