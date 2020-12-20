@@ -105,7 +105,7 @@ router.post('/lists/items', auth, async (req, res) => {
       return item.masterItemId.toString() === req.body.masterItemId;
     });
     if (existingItem) {
-      return res.status(400).send('Already in list!!!');
+      return res.status(400).send('Item is already in your list');
     }
     const item = new ListItem(req.body);
     list.listItems.push(item);

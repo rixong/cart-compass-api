@@ -12,11 +12,11 @@ const router = new express.Router();
 
 router.post('/users', async (req, res) => {
   if (req.body.password !== req.body.passwordConfirmation) {
-    return res.status(200).send({ error: 'Passwords don\'t match. Please try again.' });
+    return res.status(400).send({ error: 'Passwords don\'t match' });
   }
   const userExists = await User.findOne({ email: req.body.email });
   if (userExists) {
-    return res.status(200).send({ error: 'Account already exists with this email.' });
+    return res.status(400).send({ error: 'Account already exists with this email' });
   }
   const user = new User(req.body);
   const categories = await Category.find({});
@@ -30,11 +30,7 @@ router.post('/users', async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
   } catch (e) {
-    if (e.code === 11000) {
-      res.status(204).send('Email already exists.');
-    } else {
-      res.status(500).send('Invalid Login');
-    }
+    res.status(500).send({ error: 'Something went wrong' });
   }
 });
 
@@ -46,7 +42,7 @@ router.post('/login', async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
   } catch (error) {
-    res.status(400).send('oops.');
+    res.status(400).send({ error: 'Invalid Login' });
   }
 });
 
