@@ -14,24 +14,24 @@ const { Schema } = mongoose;
 const UserSchema = new Schema({
   email: {
     type: String,
-    required: true,
+    required: [true, 'An email is required'],
     unique: true,
     trim: true,
     lowercase: true,
     validate(value) {
       if (!validator.isEmail(value)) {
-        throw new Error('Not a proper email format.');
+        throw new Error('Not a proper email format');
       }
     },
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'A password is required'],
   },
   name: {
     type: String,
     trim: true,
-    required: true,
+    required: [true, 'A name is required'],
   },
   currentList: {
     type: mongoose.ObjectId,

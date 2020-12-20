@@ -11,26 +11,34 @@ const router = new express.Router();
 // New User
 
 router.post('/users', async (req, res) => {
-  if (req.body.password !== req.body.passwordConfirmation) {
-    return res.status(400).send({ error: 'Passwords don\'t match' });
-  }
   const userExists = await User.findOne({ email: req.body.email });
   if (userExists) {
     return res.status(400).send({ error: 'Account already exists with this email' });
   }
+  if (req.body.password !== req.body.passwordConfirmation) {
+    return res.status(400).send({ error: 'Passwords don\'t match' });
+  }
+  const userFields = ['name', 'email', 'password'];
   const user = new User(req.body);
-  const categories = await Category.find({});
-  let count = 1;
-  categories.forEach((cat) => {
-    const element = new SortOrder({ categoryId: cat.id, order: count });
-    user.sortOrder.push(element);
-    count += 1;
-  });
   try {
+    await user.save();
+    const categories = await Category.find({});
+    let count = 1;
+    categories.forEach((cat) => {
+      const element = new SortOrder({ categoryId: cat.id, order: count });
+      user.sortOrder.push(element);
+      count += 1;
+    });
     const token = await user.generateAuthToken();
     res.status(200).send({ user, token });
   } catch (e) {
-    res.status(500).send({ error: 'Something went wrong' });
+    const foundErrors = [];
+    userFields.forEach((field) => {
+      if (e.errors[field]) {
+        foundErrors.push(e.errors[field].message);
+      }
+    });
+    res.status(400).send({ error: foundErrors.join('. ') });
   }
 });
 
