@@ -66,7 +66,7 @@ router.get('/logout', auth, async (req, res) => {
     // req.curUser.tokens = req.curUser.tokens.filter((token) => token.token !== req.curToken);
     req.curUser.tokens = [];
     await req.curUser.save();
-    res.send({ message: 'done' });
+    res.send({ message: 'logged out' });
   } catch (error) {
     res.status(500).send();
   }

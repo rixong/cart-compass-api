@@ -3,6 +3,7 @@
 const express = require('express');
 const { MasterItem } = require('../models/masterItem');
 const auth = require('../middleware/authentication');
+const User = require('../models/user');
 
 const router = new express.Router();
 
@@ -51,6 +52,17 @@ router.delete('/items/:itemId', auth, async (req, res) => {
     res.send(req.curUser.masterList);
   } catch (e) {
     res.status(500).send({ error: 'Not connected to server.' });
+  }
+});
+
+// Get another user's masterlist
+router.get('/items', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.body.userId).select('-lists');
+    console.log(user);
+    res.send(user);
+  } catch (e) {
+    console.log(e);
   }
 });
 
