@@ -15,7 +15,8 @@ router.post('/lists', auth, async (req, res) => {
       dateCreated: Date.now(),
       userId: req.curUser._id,
     });
-    req.curUser.lists.push(list);
+    await list.save();
+    req.curUser.lists.push(list._id);
     await req.curUser.save();
     res.status(201).send(list);
   } catch (error) {

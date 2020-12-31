@@ -47,7 +47,7 @@ const UserSchema = new Schema({
   }],
   masterList: [MasterItemSchema],
   sortOrder: [SortOrderSchema],
-  lists: [ListSchema],
+  lists: [mongoose.ObjectId],
 });
 
 // Login
