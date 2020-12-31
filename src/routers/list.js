@@ -16,18 +16,22 @@ router.post('/lists', auth, async (req, res) => {
       userId: req.curUser._id,
     });
     await list.save();
-    req.curUser.lists.push(list._id);
-    await req.curUser.save();
+    // req.curUser.lists.push(list._id);
+    // await req.curUser.save();
     res.status(201).send(list);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-// Get User's Lists
+// Get User's Lists (own and shared)
 router.get('/lists', auth, async (req, res) => {
   try {
-    res.status(201).send(req.curUser.lists);
+    const userLists = await List.find({ userId: req.curUser._id });
+    const sharedLists = await List.find({ sharedWith: req.curUser._id });
+    const lists = userLists.concat(sharedLists);
+    // console.log(lists);
+    res.status(201).send(lists);
   } catch (error) {
     res.status(500).send(error);
   }
