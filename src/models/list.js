@@ -3,12 +3,16 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ListItemSchema = new Schema({
-  masterItemId: {
-    type: mongoose.ObjectId,
+  name: {
+    type: String,
     required: true,
   },
   quantity: String,
-  active: {
+  categoryId: {
+    type: mongoose.ObjectId,
+    required: true,
+  },
+  isActive: {
     type: Boolean,
     default: true,
   },

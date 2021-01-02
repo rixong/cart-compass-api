@@ -5,7 +5,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { ListSchema } = require('./list');
+// const { ListSchema } = require('./list');
 const { MasterItemSchema } = require('./masterItem');
 const { SortOrderSchema } = require('./sortOrder');
 

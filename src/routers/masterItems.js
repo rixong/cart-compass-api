@@ -9,11 +9,7 @@ const router = new express.Router();
 
 // Add Master Item
 router.post('/items', auth, async (req, res) => {
-  // Check if category exists
   try {
-    // if (!req.curUser.categories.find((cat) => cat.id === req.body.categoryId)) {
-    //   res.status(401).send({ error: 'Category Id not found.' });
-    // }
     // Check if item already exists - return if true, or create new item
     let foundItem = req.curUser.masterList.find((item) => item.name === req.body.name);
     if (foundItem) {
@@ -42,11 +38,11 @@ router.delete('/items/:itemId', auth, async (req, res) => {
     });
 
     // remove from all listItems
-    req.curUser.lists.forEach((list) => {
-      list.listItems = list.listItems.filter((item) => {
-        return item.masterItemId.toString() !== req.params.itemId;
-      });
-    });
+    // req.curUser.lists.forEach((list) => {
+    //   let curlistItems = list.listItems.filter((item) => {
+    //     return item.masterItemId.toString() !== req.params.itemId;
+    //   });
+    // });
 
     await req.curUser.save();
     res.send(req.curUser.masterList);
@@ -59,10 +55,10 @@ router.delete('/items/:itemId', auth, async (req, res) => {
 router.get('/items', auth, async (req, res) => {
   try {
     const user = await User.findById(req.body.userId).select('-lists');
-    console.log(user);
+    // console.log(user);
     res.send(user);
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 });
 

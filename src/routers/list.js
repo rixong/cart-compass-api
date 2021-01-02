@@ -24,11 +24,11 @@ router.post('/lists', auth, async (req, res) => {
   }
 });
 
-// Get User's Lists (own and shared)
+// Get User's Lists (own and shared - using the list 'sharedWIth' field)
 router.get('/lists', auth, async (req, res) => {
   try {
-    const userLists = await List.find({ userId: req.curUser._id });
-    const sharedLists = await List.find({ sharedWith: req.curUser._id });
+    const userLists = await List.find({ userId: req.curUser._id }).select('-listItems');
+    const sharedLists = await List.find({ sharedWith: req.curUser._id }).select('-listItems');
     const lists = userLists.concat(sharedLists);
     // console.log(lists);
     res.status(201).send(lists);
@@ -40,10 +40,7 @@ router.get('/lists', auth, async (req, res) => {
 // Delete a list
 router.delete('/lists/:id', auth, async (req, res) => {
   try {
-    req.curUser.lists = req.curUser.lists.filter((list) => {
-      return list.id !== req.params.id;
-    });
-    await req.curUser.save();
+    await List.deleteOne({ _id: req.body.listId });
     res.status(201).send();
   } catch (e) {
     res.status(500).send(e);
@@ -88,7 +85,7 @@ router.get('/lists/current', auth, async (req, res) => {
 //   }
 // });
 
-// Set User's Current List
+// Set User's Current List ID
 router.post('/lists/current/:listId', auth, async (req, res) => {
   try {
     // validate list existence
@@ -103,51 +100,51 @@ router.post('/lists/current/:listId', auth, async (req, res) => {
 /// List Item Routes
 
 // Add Item to Current List
+// eslint-disable-next-line consistent-return
 router.post('/lists/items', auth, async (req, res) => {
   try {
     const list = await List.findById(req.curUser.currentList);
     const existingItem = list.listItems.find((item) => {
-      return item.masterItemId.toString() === req.body.masterItemId;
+      return item.name.toLowerCase() === req.body.name.toLowerCase();
     });
-    console.log(existingItem);
     if (existingItem) {
       return res.status(400).send('Item is already in your list');
     }
     const item = new ListItem(req.body);
     list.listItems.push(item);
     await list.save();
-    res.send(list.listItems);
-  } catch (e) {
-    res.status(500).send(e);
-  }
-});
-
-// Toggle Item's Active Property
-router.patch('/lists/items/:itemId', auth, async (req, res) => {
-  try {
-    const list = req.curUser.lists.id(req.curUser.currentList);
-    const item = list.listItems.id(req.params.itemId);
-    // console.log(item);
-    item.active = !item.active;
-    await req.curUser.save();
     res.send(item);
   } catch (e) {
     res.status(500).send(e);
   }
 });
 
-// Delete list item
-router.delete('/lists/items', auth, async (req, res) => {
+// Toggle Item's Active Property
+router.patch('/lists/items/:name', auth, async (req, res) => {
   try {
-    const list = req.curUser.lists.id(req.curUser.currentList);
-    list.listItems = list.listItems.filter((item) => {
-      return item._id.toString() !== req.body.itemId;
-    });
-    await req.curUser.save();
-    res.send(list);
+    const list = await List.findById(req.curUser.currentList);
+    const curItem = list.listItems.find((item) => item.name === req.params.name);
+    console.log(curItem);
+    curItem.isActive = !curItem.isActive;
+    await list.save();
+    res.send(curItem);
   } catch (e) {
     res.status(500).send(e);
   }
 });
+
+// Delete list item
+// router.delete('/lists/items', auth, async (req, res) => {
+//   try {
+//     const list = req.curUser.lists.id(req.curUser.currentList);
+//     list.listItems = list.listItems.filter((item) => {
+//       return item._id.toString() !== req.body.itemId;
+//     });
+//     await req.curUser.save();
+//     res.send(list);
+//   } catch (e) {
+//     res.status(500).send(e);
+//   }
+// });
 
 module.exports = router;
