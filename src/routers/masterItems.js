@@ -37,13 +37,6 @@ router.delete('/items/:itemId', auth, async (req, res) => {
       return req.params.itemId !== item._id.toString();
     });
 
-    // remove from all listItems
-    // req.curUser.lists.forEach((list) => {
-    //   let curlistItems = list.listItems.filter((item) => {
-    //     return item.masterItemId.toString() !== req.params.itemId;
-    //   });
-    // });
-
     await req.curUser.save();
     res.send(req.curUser.masterList);
   } catch (e) {
