@@ -1,9 +1,12 @@
 /* eslint-disable arrow-body-style */
 /* eslint-disable no-underscore-dangle */
 const express = require('express');
+const { DateTime } = require('luxon');
+const User = require('../models/user');
 const { List, ListItem } = require('../models/list');
 const auth = require('../middleware/authentication');
-// const User = require('../models/user');
+const sender = require('../mail/mailer');
+const { send } = require('@sendgrid/mail');
 
 const router = new express.Router();
 
@@ -16,8 +19,6 @@ router.post('/lists', auth, async (req, res) => {
       userId: req.curUser._id,
     });
     await list.save();
-    // req.curUser.lists.push(list._id);
-    // await req.curUser.save();
     res.status(201).send(list);
   } catch (error) {
     res.status(500).send(error);
@@ -57,33 +58,33 @@ router.get('/lists/current', auth, async (req, res) => {
   }
 });
 
-// Get a shared list
+// Share a list
+router.post('/lists/share', auth, async (req, res) => {
+  try {
+    // Check if email is valid
+    const invitedUser = await User.findOne({ email: req.body.email });
+    if (!invitedUser || invitedUser.id === req.curUser.id) {
+      return res.status(400).send('Not a valid user.');
+    }
+    const list = await List.findById(req.body.listId);
+    list.sharedWith.push(invitedUser.id);
+    await list.save();
 
-// router.get('/lists/shared', auth, async (req, res) => {
-//   try {
-//     // console.log(req.curUser._id);
-//     const user = await User.findOne({ _id: req.body.userId });
-//     const list = user.lists.id(req.body.listId);
-
-//     if (list.sharedWith.includes(req.curUser.id)) {
-//       const itemIds = list.listItems.map((item) => item.masterItemId);
-//       const arr = [];
-//       // console.log(itemIds);
-//       user.masterList.forEach((item) => {
-//         // console.log(item._id);
-//         if (itemIds.includes(item._id)) {
-//           arr.push(item);
-//         }
-//       });
-//       // console.log('blue', arr);
-//       res.send({ list });
-//     } else {
-//       res.send({ error: 'This list has not been shared with you.' });
-//     }
-//   } catch (e) {
-//     res.send('oops');
-//   }
-// });
+    const dt = DateTime.fromJSDate(list.dateCreated).toLocaleString(DateTime.DATE_HUGE);
+    const listName = `${list.name} - ${dt}`;
+    // sender.sendEmail(
+    //   {
+    //     name: req.curUser.name,
+    //     receiver: req.body.email,
+    //     listName,
+    //     template: 'share_notification',
+    //   },
+    // );
+    res.send('Success');
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 // Set User's Current List ID
 router.post('/lists/current/:listId', auth, async (req, res) => {
