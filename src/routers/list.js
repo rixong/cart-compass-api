@@ -66,8 +66,11 @@ router.post('/lists/share', auth, async (req, res) => {
     if (!invitedUser || invitedUser.id === req.curUser.id) {
       return res.status(400).send('Not a valid user.');
     }
-    const list = await List.findById(req.body.listId);
-    list.sharedWith.push(invitedUser.id);
+    const list = await List.findById(req.curUser.currentList);
+    // Don't duplicate share
+    if (!list.sharedWith.includes(invitedUser.id)) {
+      list.sharedWith.push(invitedUser.id);
+    }
     await list.save();
 
     const dt = DateTime.fromJSDate(list.dateCreated).toLocaleString(DateTime.DATE_HUGE);
